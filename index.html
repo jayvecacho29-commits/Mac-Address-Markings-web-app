@@ -2,370 +2,277 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>STLAF Device Registry</title>
+<title>Device Registry</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
   :root{
-    --grid: #E1E3E6;
-    --grid-strong: #C7CACD;
-    --header-bg: #F8F9FA;
-    --header-bg-active: #E8F0FE;
-    --text: #202124;
-    --text-dim: #5F6368;
-    --blue: #1A73E8;
-    --blue-dim: #E8F0FE;
-    --green: #188038;
-    --red: #D93025;
+    --navy-950: #0A1930;
+    --navy-900: #0F2242;
+    --navy-800: #16305C;
+    --navy-700: #1F3E73;
+    --blue-500: #2F6FE4;
+    --blue-400: #4C8CF0;
+    --blue-100: #E7F1FE;
+    --blue-50:  #F2F8FF;
+    --bg: #F4F8FC;
+    --surface: #FFFFFF;
+    --border: #E1E9F2;
+    --text: #10233F;
+    --text-dim: #5E7290;
+    --text-faint: #93A3BB;
+    --red: #D64545;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    font-family:'Roboto','Arial',sans-serif;
-    background:#F1F3F4;
+    font-family:'Inter',-apple-system,sans-serif;
+    background:var(--bg);
     color:var(--text);
     min-height:100vh;
   }
 
-  /* ---------- GATE PAGE ---------- */
+  /* ---------- GATE ---------- */
   #gate{
     min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
     padding:20px;
-    background:linear-gradient(180deg,#F8F9FA 0%, #F1F3F4 100%);
+    background:linear-gradient(160deg, var(--navy-950) 0%, var(--navy-800) 100%);
   }
   .gate-card{
     background:#fff;
-    border:1px solid var(--grid-strong);
-    border-radius:8px;
-    box-shadow:0 1px 3px rgba(60,64,67,0.15), 0 4px 8px rgba(60,64,67,0.1);
+    border-radius:14px;
+    box-shadow:0 20px 60px rgba(10,25,48,0.35);
     width:100%;
     max-width:380px;
     padding:40px 36px 32px;
     text-align:center;
   }
   .gate-icon{
-    width:44px; height:44px;
+    width:52px; height:52px;
     margin:0 auto 18px;
+    border-radius:12px;
+    background:var(--navy-900);
     display:flex; align-items:center; justify-content:center;
   }
-  .gate-card h1{
-    font-family:'Google Sans','Roboto',sans-serif;
-    font-size:20px;
-    font-weight:500;
-    margin:0 0 6px;
-    color:var(--text);
-  }
-  .gate-card p.sub{
-    font-size:13px;
-    color:var(--text-dim);
-    margin:0 0 26px;
-    line-height:1.5;
-  }
-  .gate-field{
-    text-align:left;
-    margin-bottom:6px;
-  }
-  .gate-field label{
-    display:block;
-    font-size:12px;
-    color:var(--text-dim);
-    margin-bottom:6px;
-  }
+  .gate-card h1{ font-size:20px; font-weight:700; margin:0 0 6px; }
+  .gate-card p.sub{ font-size:13px; color:var(--text-dim); margin:0 0 26px; line-height:1.5; }
+  .gate-field{ text-align:left; margin-bottom:6px; }
+  .gate-field label{ display:block; font-size:12px; color:var(--text-dim); margin-bottom:6px; font-weight:500; }
   .gate-field input{
-    width:100%;
-    padding:11px 13px;
-    border:1px solid #DADCE0;
-    border-radius:5px;
-    font-size:14px;
-    font-family:'Roboto',sans-serif;
-    outline:none;
-    color:var(--text);
+    width:100%; padding:11px 13px; border:1.5px solid var(--border); border-radius:8px;
+    font-size:14px; font-family:'Inter',sans-serif; outline:none; color:var(--text);
     transition:border-color .15s, box-shadow .15s;
   }
-  .gate-field input:focus{
-    border-color:var(--blue);
-    box-shadow:0 0 0 1px var(--blue);
-  }
-  .gate-error{
-    font-size:12px;
-    color:var(--red);
-    text-align:left;
-    margin-top:8px;
-    min-height:16px;
-  }
+  .gate-field input:focus{ border-color:var(--blue-500); box-shadow:0 0 0 3px var(--blue-100); }
+  .gate-error{ font-size:12px; color:var(--red); text-align:left; margin-top:8px; min-height:16px; }
   .gate-btn{
-    width:100%;
-    margin-top:20px;
-    background:var(--blue);
-    color:#fff;
-    border:none;
-    padding:11px;
-    border-radius:5px;
-    font-size:14px;
-    font-weight:500;
-    font-family:'Roboto',sans-serif;
+    width:100%; margin-top:20px; background:var(--navy-900); color:#fff; border:none;
+    padding:12px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; transition:background .15s;
+  }
+  .gate-btn:hover{ background:var(--navy-800); }
+  .gate-foot{ font-size:11px; color:var(--text-faint); margin-top:22px; }
+
+  /* ---------- APP LAYOUT ---------- */
+  #app{ display:none; }
+  #app.show{ display:flex; min-height:100vh; }
+
+  .sidebar{
+    width:64px;
+    background:var(--navy-950);
+    display:flex; flex-direction:column; align-items:center;
+    padding:18px 0;
+    flex-shrink:0;
+  }
+  .sidebar .logo{
+    width:34px; height:34px; border-radius:9px;
+    background:var(--blue-500);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:28px;
+  }
+  .sidebar nav{ display:flex; flex-direction:column; gap:6px; flex:1; }
+  .side-icon{
+    width:40px; height:40px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
     cursor:pointer;
-    transition:background .15s;
+    color:#7A93BC;
+    transition:background .15s, color .15s;
   }
-  .gate-btn:hover{background:#1765CC;}
-  .gate-foot{
-    font-size:11px;
-    color:#9AA0A6;
-    margin-top:22px;
-  }
+  .side-icon:hover{ background:var(--navy-900); color:#fff; }
+  .side-icon.active{ background:var(--blue-500); color:#fff; }
+  .side-bottom{ display:flex; flex-direction:column; gap:6px; }
 
-  /* ---------- APP ---------- */
-  #app{display:none;}
-  #app.show{display:block;}
+  .main{ flex:1; min-width:0; padding:26px 30px 60px; }
 
-  .topbar{
-    background:#fff;
-    border-bottom:1px solid var(--grid-strong);
-    padding:10px 20px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:10px;
+  .page-head{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    margin-bottom:20px; flex-wrap:wrap; gap:12px;
   }
-  .topbar-left{display:flex; align-items:center; gap:10px;}
-  .topbar-left svg{flex-shrink:0;}
-  .topbar h1{
-    font-family:'Google Sans','Roboto',sans-serif;
-    font-size:16px;
-    font-weight:500;
-    margin:0;
+  .page-head h1{ font-size:24px; font-weight:700; margin:0 0 4px; }
+  .page-head .count{ font-size:13px; color:var(--text-dim); }
+  .head-actions{ display:flex; gap:8px; }
+  .icon-square{
+    width:36px; height:36px; border-radius:8px;
+    border:1px solid var(--border); background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:var(--text-dim); transition:all .15s;
   }
-  .topbar .who{
-    font-size:12px;
-    color:var(--text-dim);
-  }
-  .topbar-right{display:flex; align-items:center; gap:8px;}
-  .tb-search{
-    display:flex; align-items:center;
-    border:1px solid #DADCE0;
-    border-radius:5px;
-    padding:6px 10px;
-    gap:6px;
-    background:#F8F9FA;
-  }
-  .tb-search input{
-    border:none; background:transparent; outline:none;
-    font-size:13px; width:180px; color:var(--text);
-    font-family:'Roboto',sans-serif;
-  }
-  .tb-btn{
-    background:var(--blue);
-    color:#fff;
-    border:none;
-    padding:8px 14px;
-    border-radius:5px;
-    font-size:13px;
-    font-weight:500;
-    font-family:'Roboto',sans-serif;
-    cursor:pointer;
-  }
-  .tb-btn:hover{background:#1765CC;}
-  .tb-btn-outline{
-    background:#fff;
-    color:var(--text-dim);
-    border:1px solid #DADCE0;
-    padding:8px 12px;
-    border-radius:5px;
-    font-size:12.5px;
-    cursor:pointer;
-    font-family:'Roboto',sans-serif;
-  }
-  .tb-btn-outline:hover{background:#F8F9FA;}
+  .icon-square:hover{ border-color:var(--blue-400); color:var(--blue-500); }
 
-  .sheet-wrap{
-    padding:22px;
-    overflow-x:auto;
+  .toolbar-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:16px;
   }
-  .sheet{
-    background:#fff;
-    border:1px solid var(--grid-strong);
-    border-radius:2px;
-    display:inline-block;
-    min-width:100%;
+  .toolbar-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  .search-input-wrap{
+    flex:1; min-width:220px; display:flex; align-items:center; gap:8px;
+    background:var(--blue-50); border:1px solid var(--border); border-radius:8px; padding:9px 12px;
   }
-  table{border-collapse:collapse; width:100%;}
+  .search-input-wrap input{
+    border:none; background:transparent; outline:none; font-size:13.5px; width:100%;
+    font-family:'Inter',sans-serif; color:var(--text);
+  }
+  .select-wrap select{
+    border:1px solid var(--border); background:#fff; border-radius:8px;
+    padding:9px 30px 9px 12px; font-size:13px; font-family:'Inter',sans-serif;
+    color:var(--text); outline:none; cursor:pointer; appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%235E7290'/></svg>");
+    background-repeat:no-repeat; background-position:right 12px center;
+  }
+  .select-wrap select:focus{ border-color:var(--blue-400); }
 
-  /* column letter row */
-  .col-row th{
-    background:var(--header-bg);
-    border:1px solid var(--grid);
-    color:var(--text-dim);
-    font-weight:400;
-    font-size:11px;
-    padding:4px 0;
-    text-align:center;
-    min-width:150px;
+  .add-btn{
+    background:var(--navy-900); color:#fff; border:none; padding:9px 18px;
+    border-radius:8px; font-size:13.5px; font-weight:600; cursor:pointer; white-space:nowrap;
   }
-  .col-row th.rownum-col{min-width:34px; width:34px;}
+  .add-btn:hover{ background:var(--navy-800); }
 
-  /* banner row (SSID/password) */
-  .banner-row td{
-    border:1px solid var(--grid);
-    background:#fff;
-    padding:0;
+  .tabs{ display:flex; gap:6px; flex-wrap:wrap; }
+  .tab{
+    padding:7px 14px; border-radius:7px; font-size:13px; font-weight:500;
+    color:var(--text-dim); background:transparent; border:none; cursor:pointer; transition:all .15s;
   }
-  .banner-row .rownum-col{background:var(--header-bg); border:1px solid var(--grid);}
-  .banner-cell{
-    padding:9px 12px;
-    font-size:13px;
-    font-weight:700;
-    text-align:center;
-    color:var(--text);
-  }
-  .banner-cell[contenteditable="true"]{outline:none; cursor:text;}
-  .banner-cell[contenteditable="true"]:focus{background:var(--blue-dim); box-shadow:inset 0 0 0 2px var(--blue);}
+  .tab:hover{ background:var(--blue-50); }
+  .tab.active{ background:var(--navy-900); color:#fff; }
 
-  /* header labels row */
-  .label-row td{
-    border:1px solid var(--grid);
-    background:#fff;
-    padding:9px 12px;
-    font-size:12.5px;
-    font-weight:700;
-    text-align:center;
-    color:var(--text);
+  /* ---------- TABLE ---------- */
+  .table-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    overflow:hidden;
   }
-  .label-row .rownum-col{background:var(--header-bg);}
+  table{ width:100%; border-collapse:collapse; }
+  thead th{
+    text-align:left; font-size:11px; letter-spacing:0.4px; text-transform:uppercase;
+    color:var(--text-faint); font-weight:600; padding:12px 16px;
+    border-bottom:1px solid var(--border); background:var(--blue-50);
+    cursor:pointer; user-select:none;
+  }
+  thead th:hover{ color:var(--blue-500); }
+  tbody tr{ border-bottom:1px solid var(--border); transition:background .1s; }
+  tbody tr:last-child{ border-bottom:none; }
+  tbody tr:hover{ background:var(--blue-50); }
+  td{ padding:14px 16px; font-size:13.5px; vertical-align:middle; }
+  td.id-cell{ color:var(--text-faint); font-weight:600; font-size:12.5px; }
+  td.name-cell{ font-weight:600; }
+  .mac{ font-family:'SF Mono','Courier New',monospace; font-size:12px; color:var(--text-dim); }
+  .mac.empty{ color:var(--text-faint); font-style:italic; }
+  .date-cell{ color:var(--text-dim); font-size:12.5px; }
 
-  /* data rows */
-  tbody.data-body td{
-    border:1px solid var(--grid);
-    padding:0;
-    font-size:13px;
-    height:34px;
+  .badge{
+    display:inline-block; padding:4px 11px; border-radius:20px; font-size:11.5px; font-weight:700;
+    letter-spacing:0.2px;
   }
-  tbody.data-body .rownum-col{
-    background:var(--header-bg);
-    color:var(--text-dim);
-    font-size:11.5px;
-    text-align:center;
-    width:34px;
-    min-width:34px;
-    user-select:none;
-    position:relative;
-  }
-  .del-x{
-    display:none;
-    position:absolute;
-    right:2px; top:50%; transform:translateY(-50%);
-    color:var(--red);
-    cursor:pointer;
-    font-size:13px;
-    line-height:1;
-    padding:2px;
-  }
-  tbody.data-body tr:hover .del-x{display:block;}
-  tbody.data-body tr:hover .rownum-text{display:none;}
+  .badge-active{ background:var(--navy-900); color:#fff; }
+  .badge-pending{ background:var(--blue-500); color:#fff; }
+  .badge-returned{ background:var(--blue-100); color:var(--navy-800); border:1px solid var(--border); }
+  .badge-replacement{ background:var(--blue-100); color:var(--blue-500); border:1px solid var(--blue-400); }
+  .badge-lost{ background:#fff; color:var(--red); border:1px solid var(--red); }
+  .badge-none{ background:var(--blue-50); color:var(--text-faint); }
 
-  .cell-input{
-    width:100%;
-    height:34px;
-    border:none;
-    outline:none;
-    padding:0 10px;
-    font-size:13px;
-    font-family:'Roboto',sans-serif;
-    color:var(--text);
-    background:transparent;
+  .row-actions{ display:flex; gap:6px; justify-content:flex-end; opacity:0; transition:opacity .1s; }
+  tbody tr:hover .row-actions{ opacity:1; }
+  .icon-btn{
+    background:transparent; border:1px solid var(--border); color:var(--text-faint);
+    width:28px; height:28px; border-radius:6px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition:all .15s;
   }
-  .cell-input.mono{font-family:'Roboto Mono','Courier New',monospace; font-size:12.5px; letter-spacing:0.2px;}
-  .cell-input:focus{
-    background:#fff;
-    box-shadow:inset 0 0 0 2px var(--blue);
-  }
-  td.invalid .cell-input{box-shadow:inset 0 0 0 2px var(--red);}
+  .icon-btn:hover{ border-color:var(--blue-400); color:var(--blue-500); }
+  .icon-btn.danger:hover{ border-color:var(--red); color:var(--red); }
 
-  .remarks-cell{position:relative;}
-  .remarks-cell select{
-    width:100%;
-    height:34px;
-    border:none;
-    outline:none;
-    padding:0 10px;
-    font-size:13px;
-    font-family:'Roboto',sans-serif;
-    color:var(--text);
-    background:transparent;
-    appearance:none;
-    cursor:pointer;
-  }
-  .remarks-cell::after{
-    content:'';
-    position:absolute;
-    right:9px; top:50%;
-    width:0; height:0;
-    border-left:4px solid transparent;
-    border-right:4px solid transparent;
-    border-top:5px solid var(--text-dim);
-    transform:translateY(-30%);
-    pointer-events:none;
-  }
-  .remarks-cell select:focus{background:#fff; box-shadow:inset 0 0 0 2px var(--blue);}
+  .empty-state{ padding:60px 20px; text-align:center; }
+  .empty-state p{ color:var(--text-dim); font-size:14px; margin:0 0 16px; }
 
-  .add-row-btn{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    padding:9px 12px;
-    font-size:12.5px;
-    color:var(--text-dim);
-    cursor:pointer;
-    border:1px solid var(--grid);
-    border-top:none;
-    background:#fff;
+  /* ---------- MODAL ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(10,25,48,0.5);
+    display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
   }
-  .add-row-btn:hover{background:var(--header-bg);}
+  .overlay.show{ display:flex; }
+  .modal{
+    background:#fff; border-radius:14px; width:100%; max-width:440px; padding:26px;
+    box-shadow:0 20px 60px rgba(10,25,48,0.3);
+  }
+  .modal h2{ font-size:16px; margin:0 0 18px; font-weight:700; }
+  .field{ margin-bottom:14px; }
+  .field label{
+    display:block; font-size:11.5px; font-weight:600; letter-spacing:0.3px; text-transform:uppercase;
+    color:var(--text-faint); margin-bottom:6px;
+  }
+  .field input, .field select{
+    width:100%; border:1.5px solid var(--border); color:var(--text); padding:10px 12px;
+    border-radius:8px; font-size:13.5px; font-family:'Inter',sans-serif; outline:none;
+  }
+  .field input.mono-field{ font-family:'SF Mono','Courier New',monospace; font-size:12.5px; }
+  .field input:focus, .field select:focus{ border-color:var(--blue-500); box-shadow:0 0 0 3px var(--blue-100); }
+  .field-error{ font-size:11px; color:var(--red); margin-top:4px; display:none; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:20px; }
+  .btn-ghost{
+    background:transparent; border:1px solid var(--border); color:var(--text-dim);
+    padding:10px 18px; border-radius:8px; font-size:13.5px; font-weight:600; cursor:pointer;
+  }
+  .btn-ghost:hover{ border-color:var(--text-dim); color:var(--text); }
+  .btn-primary{
+    background:var(--navy-900); color:#fff; border:none; padding:10px 18px; border-radius:8px;
+    font-size:13.5px; font-weight:600; cursor:pointer;
+  }
+  .btn-primary:hover{ background:var(--navy-800); }
 
   .toast{
-    position:fixed;
-    bottom:22px; left:50%; transform:translateX(-50%) translateY(20px);
-    background:#323639;
-    color:#fff;
-    padding:10px 18px;
-    border-radius:5px;
-    font-size:13px;
-    font-family:'Roboto',sans-serif;
-    opacity:0;
-    transition:all .25s;
-    pointer-events:none;
-    z-index:100;
-    box-shadow:0 2px 6px rgba(0,0,0,0.3);
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--navy-900); color:#fff; padding:10px 18px; border-radius:8px;
+    font-size:13px; opacity:0; transition:all .25s; pointer-events:none; z-index:100;
   }
-  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-  @media (max-width:700px){
-    .topbar{flex-direction:column; align-items:flex-start;}
-    .tb-search input{width:120px;}
+  @media (max-width:800px){
+    thead{ display:none; }
+    table, tbody, tr, td{ display:block; width:100%; }
+    tbody tr{ border:1px solid var(--border); border-radius:10px; margin:10px; padding:6px 0; }
+    td{ padding:6px 16px; display:flex; justify-content:space-between; gap:10px; }
+    td::before{
+      content:attr(data-label); font-size:10.5px; text-transform:uppercase; letter-spacing:0.4px;
+      color:var(--text-faint); font-weight:600;
+    }
+    .row-actions{ opacity:1; padding-top:8px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ===================== GATE PAGE ===================== -->
+<!-- ===================== GATE ===================== -->
 <div id="gate">
   <div class="gate-card">
     <div class="gate-icon">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-        <rect x="7" y="4" width="30" height="36" rx="2" fill="#0F9D58"/>
-        <rect x="11" y="12" width="22" height="3" fill="#fff"/>
-        <rect x="11" y="18" width="22" height="2" fill="#8FD9B6"/>
-        <rect x="11" y="22" width="22" height="2" fill="#8FD9B6"/>
-        <rect x="11" y="26" width="22" height="2" fill="#8FD9B6"/>
-        <rect x="11" y="30" width="22" height="2" fill="#8FD9B6"/>
-        <rect x="20" y="18" width="2" height="14" fill="#0B8043"/>
-        <rect x="27" y="18" width="2" height="14" fill="#0B8043"/>
-      </svg>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 8h18" stroke="#fff" stroke-width="1.8"/><circle cx="7" cy="6" r="0.8" fill="#fff"/></svg>
     </div>
-    <h1>STLAF Device Registry</h1>
+    <h1>Device Registry</h1>
     <p class="sub">Sign in with your STLAF intern account to view and manage the device list.</p>
     <form id="gateForm">
       <div class="gate-field">
@@ -379,84 +286,128 @@
   </div>
 </div>
 
-<!-- ===================== MAIN APP ===================== -->
+<!-- ===================== APP ===================== -->
 <div id="app">
-  <div class="topbar">
-    <div class="topbar-left">
-      <svg width="26" height="26" viewBox="0 0 44 44" fill="none">
-        <rect x="7" y="4" width="30" height="36" rx="2" fill="#0F9D58"/>
-        <rect x="11" y="12" width="22" height="3" fill="#fff"/>
-        <rect x="11" y="18" width="22" height="2" fill="#8FD9B6"/>
-        <rect x="11" y="22" width="22" height="2" fill="#8FD9B6"/>
-        <rect x="11" y="26" width="22" height="2" fill="#8FD9B6"/>
-        <rect x="11" y="30" width="22" height="2" fill="#8FD9B6"/>
-        <rect x="20" y="18" width="2" height="14" fill="#0B8043"/>
-        <rect x="27" y="18" width="2" height="14" fill="#0B8043"/>
-      </svg>
-      <div>
-        <h1>STLAF Device Registry</h1>
-        <div class="who" id="whoLine">Signed in as —</div>
-      </div>
+  <div class="sidebar">
+    <div class="logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 8h18" stroke="#fff" stroke-width="1.8"/></svg>
     </div>
-    <div class="topbar-right">
-      <div class="tb-search">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#5F6368" stroke-width="2"/><path d="M20 20l-4-4" stroke="#5F6368" stroke-width="2" stroke-linecap="round"/></svg>
-        <input type="text" id="searchInput" placeholder="Search names, MAC, remarks">
+    <nav>
+      <div class="side-icon" title="Dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg>
       </div>
-      <button class="tb-btn-outline" id="signOutBtn">Sign out</button>
+      <div class="side-icon active" title="Devices">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 8h18" stroke="currentColor" stroke-width="1.8"/></svg>
+      </div>
+      <div class="side-icon" title="People">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M3 20c0-3.5 2.8-6 6-6s6 2.5 6 6" stroke="currentColor" stroke-width="1.8"/><path d="M16 14c2.5 0.4 4.5 2.5 4.5 6" stroke="currentColor" stroke-width="1.8"/></svg>
+      </div>
+      <div class="side-icon" title="Reports">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M11 20V4M18 20v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+    </nav>
+    <div class="side-bottom">
+      <div class="side-icon" id="signOutBtn" title="Sign out">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
     </div>
   </div>
 
-  <div class="sheet-wrap">
-    <div class="sheet">
+  <div class="main">
+    <div class="page-head">
+      <div>
+        <h1>Device Registry</h1>
+        <div class="count" id="countLine">0 devices</div>
+      </div>
+      <div class="head-actions">
+        <div class="icon-square" id="exportBtn" title="Export CSV">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="icon-square" id="densityBtn" title="Toggle row density">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="10" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="16" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar-card">
+      <div class="toolbar-row">
+        <div class="search-input-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#5E7290" stroke-width="2"/><path d="M20 20l-4-4" stroke="#5E7290" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="searchInput" placeholder="Search names, MAC address...">
+        </div>
+        <div class="select-wrap">
+          <select id="sortSelect">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="name">Name A–Z</option>
+          </select>
+        </div>
+        <button class="add-btn" id="addBtn">+ Add device</button>
+      </div>
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-filter="">All</button>
+        <button class="tab" data-filter="Active">Active</button>
+        <button class="tab" data-filter="Returned">Returned</button>
+        <button class="tab" data-filter="Lost">Lost</button>
+        <button class="tab" data-filter="For replacement">For replacement</button>
+        <button class="tab" data-filter="Pending">Pending</button>
+      </div>
+    </div>
+
+    <div class="table-card">
       <table>
-        <colgroup>
-          <col style="width:34px;">
-          <col style="width:200px;">
-          <col style="width:220px;">
-          <col style="width:220px;">
-          <col style="width:220px;">
-        </colgroup>
         <thead>
-          <tr class="col-row">
-            <th class="rownum-col"></th>
-            <th>B</th>
-            <th>E</th>
-            <th>F</th>
-            <th>G</th>
+          <tr>
+            <th style="width:70px;">ID</th>
+            <th data-sort="name">Name</th>
+            <th>Laptop MAC</th>
+            <th>Mobile MAC</th>
+            <th>Remarks</th>
+            <th data-sort="date" style="width:110px;">Added</th>
+            <th style="width:80px;"></th>
           </tr>
         </thead>
-        <tbody>
-          <tr class="banner-row">
-            <td class="rownum-col"></td>
-            <td></td>
-            <td colspan="2">
-              <div class="banner-cell" id="ssidBanner" contenteditable="true" spellcheck="false">SSID: STLAF Intern | Password: stlaf-Intern!</div>
-            </td>
-            <td></td>
-          </tr>
-          <tr class="label-row">
-            <td class="rownum-col"></td>
-            <td>NAME</td>
-            <td>LAPTOP</td>
-            <td>MOBILE</td>
-            <td>REMARKS</td>
-          </tr>
-        </tbody>
+        <tbody id="tableBody"></tbody>
       </table>
-      <table id="dataTable">
-        <colgroup>
-          <col style="width:34px;">
-          <col style="width:200px;">
-          <col style="width:220px;">
-          <col style="width:220px;">
-          <col style="width:220px;">
-        </colgroup>
-        <tbody class="data-body" id="tableBody"></tbody>
-      </table>
-      <div class="add-row-btn" id="addRowBtn">
-        <span style="font-size:15px;">+</span> Add row
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <p id="emptyMsg">No devices yet.</p>
+        <button class="add-btn" id="emptyAddBtn">+ Add device</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add device</h2>
+    <div class="field">
+      <label for="fName">Name</label>
+      <input type="text" id="fName" placeholder="e.g. Juan Dela Cruz">
+    </div>
+    <div class="field">
+      <label for="fLaptop">Laptop MAC address</label>
+      <input type="text" id="fLaptop" class="mono-field" placeholder="00:1A:2B:3C:4D:5E">
+      <div class="field-error" id="errLaptop">Format should look like 00:1A:2B:3C:4D:5E</div>
+    </div>
+    <div class="field">
+      <label for="fMobile">Mobile MAC address</label>
+      <input type="text" id="fMobile" class="mono-field" placeholder="00:1A:2B:3C:4D:5E">
+      <div class="field-error" id="errMobile">Format should look like 00:1A:2B:3C:4D:5E</div>
+    </div>
+    <div class="field">
+      <label for="fRemarks">Remarks</label>
+      <select id="fRemarks">
+        <option value="">—</option>
+        <option value="Active">Active</option>
+        <option value="Returned">Returned</option>
+        <option value="Lost">Lost</option>
+        <option value="For replacement">For replacement</option>
+        <option value="Pending">Pending</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelBtn">Cancel</button>
+      <button class="btn-primary" id="saveBtn">Save entry</button>
     </div>
   </div>
 </div>
@@ -466,7 +417,10 @@
 <script>
 const ALLOWED_EMAIL = 'stlaf.itintern@gmail.com';
 let devices = [];
-let signedInEmail = '';
+let editingId = null;
+let activeFilter = '';
+let sortMode = 'newest';
+let compact = false;
 
 const macRegex = /^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$/;
 
@@ -480,10 +434,8 @@ document.getElementById('gateForm').addEventListener('submit', function(e){
     return;
   }
   err.textContent = '';
-  signedInEmail = val;
   document.getElementById('gate').style.display = 'none';
   document.getElementById('app').classList.add('show');
-  document.getElementById('whoLine').textContent = 'Signed in as ' + signedInEmail;
   loadDevices();
 });
 
@@ -491,7 +443,6 @@ document.getElementById('signOutBtn').addEventListener('click', function(){
   document.getElementById('app').classList.remove('show');
   document.getElementById('gate').style.display = 'flex';
   document.getElementById('gateEmail').value = '';
-  document.getElementById('gateError').textContent = '';
 });
 
 /* ---------- TOAST ---------- */
@@ -502,126 +453,220 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('show'), 1600);
 }
 
-/* ---------- STORAGE ---------- */
-async function loadDevices(){
+/* ---------- STORAGE (localStorage — works on GitHub Pages) ---------- */
+function loadDevices(){
   try{
-    const raw = localStorage.getItem('stlaf_devices');
+    const raw = localStorage.getItem('stlaf_devices_v2');
     devices = raw ? JSON.parse(raw) : [];
   }catch(e){
     devices = [];
   }
-  if(devices.length === 0){
-    // start with a few blank rows, like an empty sheet
-    for(let i=0;i<3;i++) devices.push(blankRow());
-  }
-  try{
-    const banner = localStorage.getItem('stlaf_ssid_banner');
-    if(banner) document.getElementById('ssidBanner').textContent = banner;
-  }catch(e){}
   render();
 }
-
-async function saveDevices(){
+function saveDevices(){
   try{
-    localStorage.setItem('stlaf_devices', JSON.stringify(devices));
+    localStorage.setItem('stlaf_devices_v2', JSON.stringify(devices));
   }catch(e){
     toast('Could not save — try again');
   }
 }
+function blankId(){
+  return 'd'+Date.now()+Math.random().toString(36).slice(2,7);
+}
+function todayStr(){
+  return new Date().toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' });
+}
 
-function blankRow(){
-  return { id: 'd'+Date.now()+Math.random().toString(36).slice(2,7), name:'', laptop:'', mobile:'', remarks:'' };
+/* ---------- BADGES ---------- */
+function badgeHtml(remark){
+  if(!remark) return '<span class="badge badge-none">—</span>';
+  const map = {
+    'Active':'badge-active',
+    'Pending':'badge-pending',
+    'Returned':'badge-returned',
+    'For replacement':'badge-replacement',
+    'Lost':'badge-lost'
+  };
+  const cls = map[remark] || 'badge-none';
+  return `<span class="badge ${cls}">${escapeHtml(remark)}</span>`;
+}
+
+function escapeHtml(str){
+  return (str||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 /* ---------- RENDER ---------- */
-const REMARK_OPTIONS = ['', 'Active', 'Returned', 'Lost', 'For replacement', 'Pending'];
-
 function render(){
   const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  let list = devices.filter(d=>{
+    if(activeFilter && d.remarks !== activeFilter) return false;
+    if(!q) return true;
+    const hay = (d.name+' '+d.laptop+' '+d.mobile+' '+d.remarks).toLowerCase();
+    return hay.includes(q);
+  });
+
+  list = list.slice().sort((a,b)=>{
+    if(sortMode === 'name') return (a.name||'').localeCompare(b.name||'');
+    if(sortMode === 'oldest') return (a.createdAt||0) - (b.createdAt||0);
+    return (b.createdAt||0) - (a.createdAt||0);
+  });
+
+  document.getElementById('countLine').textContent = devices.length + (devices.length===1 ? ' device' : ' devices');
+
   const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = '';
+  const emptyState = document.getElementById('emptyState');
 
-  devices.forEach((d, idx) => {
-    if(q){
-      const hay = (d.name+' '+d.laptop+' '+d.mobile+' '+d.remarks).toLowerCase();
-      if(!hay.includes(q)) return;
-    }
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="rownum-col">
-        <span class="rownum-text">${idx+1}</span>
-        <span class="del-x" data-id="${d.id}" title="Delete row">✕</span>
-      </td>
-      <td><input class="cell-input" data-id="${d.id}" data-field="name" value="${escapeAttr(d.name)}" placeholder=""></td>
-      <td><input class="cell-input mono" data-id="${d.id}" data-field="laptop" value="${escapeAttr(d.laptop)}" placeholder="00:1A:2B:3C:4D:5E"></td>
-      <td><input class="cell-input mono" data-id="${d.id}" data-field="mobile" value="${escapeAttr(d.mobile)}" placeholder="00:1A:2B:3C:4D:5E"></td>
-      <td class="remarks-cell">
-        <select data-id="${d.id}" data-field="remarks">
-          ${REMARK_OPTIONS.map(o=>`<option value="${escapeAttr(o)}" ${o===d.remarks?'selected':''}>${o || '—'}</option>`).join('')}
-        </select>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  tbody.querySelectorAll('.cell-input').forEach(inp=>{
-    inp.addEventListener('change', onCellChange);
-    inp.addEventListener('blur', onCellChange);
-  });
-  tbody.querySelectorAll('select').forEach(sel=>{
-    sel.addEventListener('change', onCellChange);
-  });
-  tbody.querySelectorAll('.del-x').forEach(x=>{
-    x.addEventListener('click', onDeleteRow);
-  });
-}
-
-function escapeAttr(str){
-  return (str||'').replace(/"/g,'&quot;');
-}
-
-function onCellChange(e){
-  const id = e.target.getAttribute('data-id');
-  const field = e.target.getAttribute('data-field');
-  const value = e.target.value.trim();
-  const row = devices.find(d=>d.id===id);
-  if(!row) return;
-
-  if((field==='laptop' || field==='mobile') && value && !macRegex.test(value)){
-    e.target.closest('td').classList.add('invalid');
-    toast('MAC format should look like 00:1A:2B:3C:4D:5E');
+  if(list.length === 0){
+    tbody.innerHTML = '';
+    emptyState.style.display = 'block';
+    document.getElementById('emptyMsg').textContent = devices.length===0
+      ? 'No devices yet.'
+      : 'No devices match your search or filter.';
+    document.getElementById('emptyAddBtn').style.display = devices.length===0 ? 'inline-block' : 'none';
     return;
   }
-  e.target.closest('td').classList.remove('invalid');
-  row[field] = value;
-  saveDevices();
+  emptyState.style.display = 'none';
+
+  tbody.innerHTML = list.map((d,i)=>`
+    <tr>
+      <td class="id-cell" data-label="ID">DEV-${String(d.seq||(i+1)).padStart(3,'0')}</td>
+      <td class="name-cell" data-label="Name">${escapeHtml(d.name)}</td>
+      <td data-label="Laptop MAC"><span class="mac ${d.laptop?'':'empty'}">${d.laptop?escapeHtml(d.laptop):'—'}</span></td>
+      <td data-label="Mobile MAC"><span class="mac ${d.mobile?'':'empty'}">${d.mobile?escapeHtml(d.mobile):'—'}</span></td>
+      <td data-label="Remarks">${badgeHtml(d.remarks)}</td>
+      <td class="date-cell" data-label="Added">${escapeHtml(d.dateAdded||'—')}</td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-btn" title="Edit" onclick="openEdit('${d.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn danger" title="Delete" onclick="confirmDelete('${d.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 6h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
 }
 
-function onDeleteRow(e){
-  const id = e.target.getAttribute('data-id');
-  const row = devices.find(d=>d.id===id);
-  if(!row) return;
-  const label = row.name || 'this row';
-  if(confirm(`Remove ${label}?`)){
-    devices = devices.filter(d=>d.id!==id);
+/* ---------- MODAL ---------- */
+function openAdd(){
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Add device';
+  document.getElementById('fName').value = '';
+  document.getElementById('fLaptop').value = '';
+  document.getElementById('fMobile').value = '';
+  document.getElementById('fRemarks').value = '';
+  document.getElementById('errLaptop').style.display = 'none';
+  document.getElementById('errMobile').style.display = 'none';
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('fName').focus();
+}
+window.openEdit = function(id){
+  const d = devices.find(x=>x.id===id);
+  if(!d) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Edit device';
+  document.getElementById('fName').value = d.name || '';
+  document.getElementById('fLaptop').value = d.laptop || '';
+  document.getElementById('fMobile').value = d.mobile || '';
+  document.getElementById('fRemarks').value = d.remarks || '';
+  document.getElementById('errLaptop').style.display = 'none';
+  document.getElementById('errMobile').style.display = 'none';
+  document.getElementById('overlay').classList.add('show');
+}
+window.confirmDelete = function(id){
+  const d = devices.find(x=>x.id===id);
+  if(!d) return;
+  if(confirm(`Remove "${d.name}" from the registry?`)){
+    devices = devices.filter(x=>x.id!==id);
     saveDevices();
     render();
-    toast('Row removed');
+    toast('Device removed');
   }
 }
+function closeModal(){ document.getElementById('overlay').classList.remove('show'); }
 
-document.getElementById('addRowBtn').addEventListener('click', function(){
-  devices.push(blankRow());
+function saveEntry(){
+  const name = document.getElementById('fName').value.trim();
+  const laptop = document.getElementById('fLaptop').value.trim();
+  const mobile = document.getElementById('fMobile').value.trim();
+  const remarks = document.getElementById('fRemarks').value;
+
+  if(!name){ document.getElementById('fName').focus(); toast('Name is required'); return; }
+
+  let hasError = false;
+  const errLaptop = document.getElementById('errLaptop');
+  const errMobile = document.getElementById('errMobile');
+  errLaptop.style.display = 'none';
+  errMobile.style.display = 'none';
+  if(laptop && !macRegex.test(laptop)){ errLaptop.style.display='block'; hasError=true; }
+  if(mobile && !macRegex.test(mobile)){ errMobile.style.display='block'; hasError=true; }
+  if(hasError) return;
+
+  if(editingId){
+    const d = devices.find(x=>x.id===editingId);
+    d.name=name; d.laptop=laptop; d.mobile=mobile; d.remarks=remarks;
+    toast('Entry updated');
+  } else {
+    const seq = devices.reduce((m,d)=>Math.max(m, d.seq||0), 0) + 1;
+    devices.push({ id: blankId(), seq, name, laptop, mobile, remarks, dateAdded: todayStr(), createdAt: Date.now() });
+    toast('Entry added');
+  }
   saveDevices();
+  closeModal();
   render();
-});
+}
 
+/* ---------- EXPORT CSV ---------- */
+function exportCsv(){
+  const header = ['ID','Name','Laptop MAC','Mobile MAC','Remarks','Added'];
+  const rows = devices.map((d,i)=>[
+    'DEV-'+String(d.seq||(i+1)).padStart(3,'0'), d.name, d.laptop, d.mobile, d.remarks, d.dateAdded
+  ]);
+  const csv = [header, ...rows].map(r => r.map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type:'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'device-registry.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV exported');
+}
+
+/* ---------- EVENTS ---------- */
+document.getElementById('addBtn').addEventListener('click', openAdd);
+document.getElementById('emptyAddBtn').addEventListener('click', openAdd);
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+document.getElementById('saveBtn').addEventListener('click', saveEntry);
+document.getElementById('overlay').addEventListener('click', (e)=>{ if(e.target.id==='overlay') closeModal(); });
 document.getElementById('searchInput').addEventListener('input', render);
-
-document.getElementById('ssidBanner').addEventListener('blur', function(){
-  try{
-    localStorage.setItem('stlaf_ssid_banner', this.textContent.trim());
-  }catch(e){}
+document.getElementById('sortSelect').addEventListener('change', function(){ sortMode=this.value; render(); });
+document.getElementById('exportBtn').addEventListener('click', exportCsv);
+document.getElementById('densityBtn').addEventListener('click', function(){
+  compact = !compact;
+  document.querySelectorAll('td, thead th').forEach(el=>{
+    el.style.padding = compact ? '7px 16px' : '';
+  });
+});
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', function(){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    this.classList.add('active');
+    activeFilter = this.getAttribute('data-filter');
+    render();
+  });
+});
+document.querySelectorAll('th[data-sort]').forEach(th=>{
+  th.addEventListener('click', function(){
+    const key = this.getAttribute('data-sort');
+    if(key==='name'){ sortMode = sortMode==='name' ? 'newest' : 'name'; }
+    if(key==='date'){ sortMode = sortMode==='newest' ? 'oldest' : 'newest'; }
+    render();
+  });
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Escape' && document.getElementById('overlay').classList.contains('show')) closeModal();
 });
 </script>
 </body>
