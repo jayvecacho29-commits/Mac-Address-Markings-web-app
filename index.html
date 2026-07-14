@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Device Registry</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -479,6 +480,16 @@
 <div class="toast" id="toast"></div>
 
 <script>
+/* =========================================================
+   SUPABASE CONFIG — replace these two values with your own
+   project's URL and anon (public) key from:
+   Supabase Dashboard → Project Settings → API
+   ========================================================= */
+const SUPABASE_URL = 'https://xaxsfyjgdcyetkfujrrd.supabase.co/rest/v1/';
+const SUPABASE_ANON_KEY = 'sb_publishable_Gz09UcR_XXbbKB2hFVWjVQ_8cRtk00R';
+
+const db = (SUPABASE_URL.startsWith('YOUR_') ? null : window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY));
+
 const ALLOWED_EMAIL = 'stlaf.itintern@gmail.com';
 let devices = [];
 let editingId = null;
@@ -535,26 +546,40 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('show'), 1600);
 }
 
-/* ---------- STORAGE (localStorage — works on GitHub Pages) ---------- */
-function loadDevices(){
-  try{
-    const raw = localStorage.getItem('stlaf_devices_v2');
-    devices = raw ? JSON.parse(raw) : [];
-  }catch(e){
+/* ---------- STORAGE (Supabase) ---------- */
+async function loadDevices(){
+  if(!db){
+    toast('Supabase isn\u2019t configured yet — see the setup notes');
     devices = [];
+    render();
+    return;
+  }
+  const { data, error } = await db.from('devices').select('*').order('created_at', { ascending:true });
+  if(error){
+    toast('Could not load devices: ' + error.message);
+    devices = [];
+  } else {
+    devices = data;
   }
   render();
+  subscribeRealtime();
 }
-function saveDevices(){
-  try{
-    localStorage.setItem('stlaf_devices_v2', JSON.stringify(devices));
-  }catch(e){
-    toast('Could not save — try again');
-  }
+
+let realtimeChannel = null;
+function subscribeRealtime(){
+  if(!db || realtimeChannel) return;
+  realtimeChannel = db.channel('devices-changes')
+    .on('postgres_changes', { event:'*', schema:'public', table:'devices' }, () => {
+      refreshQuietly();
+    })
+    .subscribe();
 }
-function blankId(){
-  return 'd'+Date.now()+Math.random().toString(36).slice(2,7);
+async function refreshQuietly(){
+  if(!db) return;
+  const { data, error } = await db.from('devices').select('*').order('created_at', { ascending:true });
+  if(!error){ devices = data; render(); }
 }
+
 function todayStr(){
   return new Date().toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' });
 }
@@ -589,8 +614,10 @@ function render(){
 
   list = list.slice().sort((a,b)=>{
     if(sortMode === 'name') return (a.name||'').localeCompare(b.name||'');
-    if(sortMode === 'oldest') return (a.createdAt||0) - (b.createdAt||0);
-    return (b.createdAt||0) - (a.createdAt||0);
+    const at = a.created_at ? new Date(a.created_at).getTime() : 0;
+    const bt = b.created_at ? new Date(b.created_at).getTime() : 0;
+    if(sortMode === 'oldest') return at - bt;
+    return bt - at;
   });
 
   document.getElementById('countLine').textContent = devices.length + (devices.length===1 ? ' device' : ' devices');
@@ -616,7 +643,7 @@ function render(){
       <td data-label="Laptop MAC"><span class="mac ${d.laptop?'':'empty'}">${d.laptop?escapeHtml(d.laptop):'—'}</span></td>
       <td data-label="Mobile MAC"><span class="mac ${d.mobile?'':'empty'}">${d.mobile?escapeHtml(d.mobile):'—'}</span></td>
       <td data-label="Remarks">${badgeHtml(d.remarks)}</td>
-      <td class="date-cell" data-label="Added">${escapeHtml(d.dateAdded||'—')}</td>
+      <td class="date-cell" data-label="Added">${escapeHtml(d.date_added||'—')}</td>
       <td>
         <div class="row-actions">
           <button class="icon-btn" title="Edit" onclick="openEdit('${d.id}')">
@@ -657,19 +684,20 @@ window.openEdit = function(id){
   document.getElementById('errMobile').style.display = 'none';
   document.getElementById('overlay').classList.add('show');
 }
-window.confirmDelete = function(id){
+window.confirmDelete = async function(id){
   const d = devices.find(x=>x.id===id);
   if(!d) return;
-  if(confirm(`Remove "${d.name}" from the registry?`)){
-    devices = devices.filter(x=>x.id!==id);
-    saveDevices();
-    render();
-    toast('Device removed');
-  }
+  if(!confirm(`Remove "${d.name}" from the registry?`)) return;
+  if(!db){ toast('Supabase isn\u2019t configured yet'); return; }
+  const { error } = await db.from('devices').delete().eq('id', id);
+  if(error){ toast('Could not delete: ' + error.message); return; }
+  devices = devices.filter(x=>x.id!==id);
+  render();
+  toast('Device removed');
 }
 function closeModal(){ document.getElementById('overlay').classList.remove('show'); }
 
-function saveEntry(){
+async function saveEntry(){
   const name = document.getElementById('fName').value.trim();
   const laptop = document.getElementById('fLaptop').value.trim();
   const mobile = document.getElementById('fMobile').value.trim();
@@ -686,16 +714,29 @@ function saveEntry(){
   if(mobile && !macRegex.test(mobile)){ errMobile.style.display='block'; hasError=true; }
   if(hasError) return;
 
+  if(!db){ toast('Supabase isn\u2019t configured yet — see the setup notes'); return; }
+
+  document.getElementById('saveBtn').disabled = true;
+
   if(editingId){
-    const d = devices.find(x=>x.id===editingId);
-    d.name=name; d.laptop=laptop; d.mobile=mobile; d.remarks=remarks;
+    const { data, error } = await db.from('devices')
+      .update({ name, laptop, mobile, remarks })
+      .eq('id', editingId)
+      .select().single();
+    document.getElementById('saveBtn').disabled = false;
+    if(error){ toast('Could not update: ' + error.message); return; }
+    const idx = devices.findIndex(x=>x.id===editingId);
+    if(idx>-1) devices[idx] = data;
     toast('Entry updated');
   } else {
-    const seq = devices.reduce((m,d)=>Math.max(m, d.seq||0), 0) + 1;
-    devices.push({ id: blankId(), seq, name, laptop, mobile, remarks, dateAdded: todayStr(), createdAt: Date.now() });
+    const { data, error } = await db.from('devices')
+      .insert({ name, laptop, mobile, remarks, date_added: todayStr() })
+      .select().single();
+    document.getElementById('saveBtn').disabled = false;
+    if(error){ toast('Could not add: ' + error.message); return; }
+    devices.push(data);
     toast('Entry added');
   }
-  saveDevices();
   closeModal();
   render();
 }
@@ -704,7 +745,7 @@ function saveEntry(){
 function exportCsv(){
   const header = ['ID','Name','Laptop MAC','Mobile MAC','Remarks','Added'];
   const rows = devices.map((d,i)=>[
-    'DEV-'+String(d.seq||(i+1)).padStart(3,'0'), d.name, d.laptop, d.mobile, d.remarks, d.dateAdded
+    'DEV-'+String(d.seq||(i+1)).padStart(3,'0'), d.name, d.laptop, d.mobile, d.remarks, d.date_added
   ]);
   const csv = [header, ...rows].map(r => r.map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob = new Blob([csv], { type:'text/csv' });
