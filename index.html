@@ -85,24 +85,59 @@
     display:flex; flex-direction:column; align-items:center;
     padding:18px 0;
     flex-shrink:0;
+    transition:width .28s cubic-bezier(.4,0,.2,1);
+    overflow:hidden;
   }
-  .sidebar .logo{
-    width:34px; height:34px; border-radius:9px;
-    background:var(--blue-500);
-    display:flex; align-items:center; justify-content:center;
-    margin-bottom:28px;
+  .sidebar.expanded{ width:212px; align-items:stretch; }
+  .sidebar-toggle{
+    width:32px; height:32px; border-radius:8px; border:none; background:transparent;
+    color:#7A93BC; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    margin:0 0 14px 16px; flex-shrink:0; transition:background .15s, color .15s, transform .2s;
   }
-  .sidebar nav{ display:flex; flex-direction:column; gap:6px; flex:1; }
+  .sidebar.expanded .sidebar-toggle{ transform:rotate(180deg); }
+  .sidebar-toggle:hover{ background:var(--navy-900); color:#fff; }
+  .logo-row{
+    display:flex; align-items:center; gap:10px; margin-bottom:28px; padding:0 14px; height:34px; overflow:hidden;
+  }
+  .logo-mark{
+    width:34px; height:34px; border-radius:9px; background:#0F1B33;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-family:Georgia,'Times New Roman',serif; font-weight:700; font-size:14px;
+    border:1px solid #D9B44A; color:#D9B44A; letter-spacing:-0.5px;
+  }
+  .logo-text{
+    display:flex; flex-direction:column; white-space:nowrap;
+    opacity:0; transform:translateX(-6px); transition:opacity .2s ease .05s, transform .2s ease .05s;
+  }
+  .sidebar.expanded .logo-text{ opacity:1; transform:translateX(0); }
+  .logo-text .wordmark{
+    font-family:Georgia,'Times New Roman',serif; font-weight:700; font-size:15px; line-height:1.1;
+  }
+  .logo-text .wordmark .gold{ color:#D9B44A; }
+  .logo-text .wordmark .navy{ color:#fff; }
+  .logo-text .tagline{ font-size:9px; color:#7A93BC; letter-spacing:0.6px; text-transform:uppercase; margin-top:1px; }
+
+  .sidebar nav{ display:flex; flex-direction:column; gap:4px; flex:1; padding:0 12px; }
   .side-icon{
-    width:40px; height:40px; border-radius:9px;
-    display:flex; align-items:center; justify-content:center;
+    height:40px; border-radius:9px;
+    display:flex; align-items:center; gap:12px;
+    justify-content:center;
     cursor:pointer;
     color:#7A93BC;
-    transition:background .15s, color .15s;
+    border:none; background:transparent; width:40px;
+    transition:background .18s, color .18s, width .28s cubic-bezier(.4,0,.2,1), padding .2s, transform .12s;
   }
+  .side-icon:active{ transform:scale(0.94); }
+  .sidebar.expanded .side-icon{ width:100%; justify-content:flex-start; padding:0 10px; }
+  .side-icon svg{ flex-shrink:0; }
+  .side-icon .label{
+    font-size:13px; font-weight:500; white-space:nowrap; opacity:0; width:0; overflow:hidden;
+    transition:opacity .18s ease .05s;
+  }
+  .sidebar.expanded .side-icon .label{ opacity:1; width:auto; }
   .side-icon:hover{ background:var(--navy-900); color:#fff; }
   .side-icon.active{ background:var(--blue-500); color:#fff; }
-  .side-bottom{ display:flex; flex-direction:column; gap:6px; }
+  .side-bottom{ display:flex; flex-direction:column; gap:4px; padding:0 12px; }
 
   .main{ flex:1; min-width:0; padding:26px 30px 60px; }
 
@@ -149,14 +184,18 @@
   .add-btn{
     background:var(--navy-900); color:#fff; border:none; padding:9px 18px;
     border-radius:8px; font-size:13.5px; font-weight:600; cursor:pointer; white-space:nowrap;
+    transition:background .15s, transform .12s;
   }
   .add-btn:hover{ background:var(--navy-800); }
+  .add-btn:active{ transform:scale(0.96); }
 
   .tabs{ display:flex; gap:6px; flex-wrap:wrap; }
   .tab{
     padding:7px 14px; border-radius:7px; font-size:13px; font-weight:500;
-    color:var(--text-dim); background:transparent; border:none; cursor:pointer; transition:all .15s;
+    color:var(--text-dim); background:transparent; border:none; cursor:pointer;
+    transition:background .18s ease, color .18s ease, transform .12s ease;
   }
+  .tab:active{ transform:scale(0.95); }
   .tab:hover{ background:var(--blue-50); }
   .tab.active{ background:var(--navy-900); color:#fff; }
 
@@ -175,7 +214,14 @@
     cursor:pointer; user-select:none;
   }
   thead th:hover{ color:var(--blue-500); }
-  tbody tr{ border-bottom:1px solid var(--border); transition:background .1s; }
+  tbody tr{ border-bottom:1px solid var(--border); transition:background .15s; animation:rowIn .25s ease backwards; }
+  tbody tr:nth-child(1){ animation-delay:.01s; }
+  tbody tr:nth-child(2){ animation-delay:.03s; }
+  tbody tr:nth-child(3){ animation-delay:.05s; }
+  tbody tr:nth-child(4){ animation-delay:.07s; }
+  tbody tr:nth-child(5){ animation-delay:.09s; }
+  tbody tr:nth-child(n+6){ animation-delay:.1s; }
+  @keyframes rowIn{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:translateY(0); } }
   tbody tr:last-child{ border-bottom:none; }
   tbody tr:hover{ background:var(--blue-50); }
   td{ padding:14px 16px; font-size:13.5px; vertical-align:middle; }
@@ -212,13 +258,18 @@
   /* ---------- MODAL ---------- */
   .overlay{
     position:fixed; inset:0; background:rgba(10,25,48,0.5);
-    display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
+    display:flex; align-items:center; justify-content:center; z-index:50; padding:20px;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .2s ease, visibility 0s linear .2s;
   }
-  .overlay.show{ display:flex; }
+  .overlay.show{ opacity:1; visibility:visible; pointer-events:auto; transition:opacity .2s ease; }
   .modal{
     background:#fff; border-radius:14px; width:100%; max-width:440px; padding:26px;
     box-shadow:0 20px 60px rgba(10,25,48,0.3);
+    transform:scale(.94) translateY(8px); opacity:0;
+    transition:transform .22s cubic-bezier(.4,0,.2,1), opacity .2s ease;
   }
+  .overlay.show .modal{ transform:scale(1) translateY(0); opacity:1; }
   .modal h2{ font-size:16px; margin:0 0 18px; font-weight:700; }
   .field{ margin-bottom:14px; }
   .field label{
@@ -245,11 +296,12 @@
   .btn-primary:hover{ background:var(--navy-800); }
 
   .toast{
-    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(16px) scale(.96);
     background:var(--navy-900); color:#fff; padding:10px 18px; border-radius:8px;
-    font-size:13px; opacity:0; transition:all .25s; pointer-events:none; z-index:100;
+    font-size:13px; opacity:0; transition:opacity .25s cubic-bezier(.4,0,.2,1), transform .25s cubic-bezier(.4,0,.2,1);
+    pointer-events:none; z-index:100;
   }
-  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
 
   @media (max-width:800px){
     thead{ display:none; }
@@ -269,8 +321,8 @@
 <!-- ===================== GATE ===================== -->
 <div id="gate">
   <div class="gate-card">
-    <div class="gate-icon">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 8h18" stroke="#fff" stroke-width="1.8"/><circle cx="7" cy="6" r="0.8" fill="#fff"/></svg>
+    <div class="gate-icon" style="background:#0F1B33; border:1px solid #D9B44A; flex-direction:column; gap:0;">
+      <div style="font-family:Georgia,'Times New Roman',serif; font-weight:700; font-size:15px;"><span style="color:#D9B44A;">ST</span><span style="color:#fff;">.AF</span></div>
     </div>
     <h1>Device Registry</h1>
     <p class="sub">Sign in with your STLAF intern account to view and manage the device list.</p>
@@ -288,28 +340,40 @@
 
 <!-- ===================== APP ===================== -->
 <div id="app">
-  <div class="sidebar">
-    <div class="logo">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M3 8h18" stroke="#fff" stroke-width="1.8"/></svg>
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" title="Expand sidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="logo-row">
+      <div class="logo-mark">S</div>
+      <div class="logo-text">
+        <div class="wordmark"><span class="gold">ST</span><span class="navy">.AF</span></div>
+        <div class="tagline">Device Registry</div>
+      </div>
     </div>
     <nav>
-      <div class="side-icon" title="Dashboard">
+      <button class="side-icon" data-page="dashboard" title="Dashboard">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg>
-      </div>
-      <div class="side-icon active" title="Devices">
+        <span class="label">Dashboard</span>
+      </button>
+      <button class="side-icon active" data-page="devices" title="Devices">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 8h18" stroke="currentColor" stroke-width="1.8"/></svg>
-      </div>
-      <div class="side-icon" title="People">
+        <span class="label">Devices</span>
+      </button>
+      <button class="side-icon" data-page="people" title="People">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M3 20c0-3.5 2.8-6 6-6s6 2.5 6 6" stroke="currentColor" stroke-width="1.8"/><path d="M16 14c2.5 0.4 4.5 2.5 4.5 6" stroke="currentColor" stroke-width="1.8"/></svg>
-      </div>
-      <div class="side-icon" title="Reports">
+        <span class="label">People</span>
+      </button>
+      <button class="side-icon" data-page="reports" title="Reports">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M11 20V4M18 20v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </div>
+        <span class="label">Reports</span>
+      </button>
     </nav>
     <div class="side-bottom">
-      <div class="side-icon" id="signOutBtn" title="Sign out">
+      <button class="side-icon" id="signOutBtn" title="Sign out">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </div>
+        <span class="label">Sign out</span>
+      </button>
     </div>
   </div>
 
@@ -437,6 +501,24 @@ document.getElementById('gateForm').addEventListener('submit', function(e){
   document.getElementById('gate').style.display = 'none';
   document.getElementById('app').classList.add('show');
   loadDevices();
+});
+
+document.getElementById('sidebarToggle').addEventListener('click', function(){
+  const sb = document.getElementById('sidebar');
+  sb.classList.toggle('expanded');
+  this.title = sb.classList.contains('expanded') ? 'Collapse sidebar' : 'Expand sidebar';
+});
+
+document.querySelectorAll('.side-icon[data-page]').forEach(btn=>{
+  btn.addEventListener('click', function(){
+    const page = this.getAttribute('data-page');
+    if(page === 'devices'){
+      document.querySelectorAll('.side-icon[data-page]').forEach(b=>b.classList.remove('active'));
+      this.classList.add('active');
+      return;
+    }
+    toast('That section is coming soon');
+  });
 });
 
 document.getElementById('signOutBtn').addEventListener('click', function(){
