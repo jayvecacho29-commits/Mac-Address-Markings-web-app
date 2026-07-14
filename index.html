@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>STLAF Device Registry</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Google+Sans:wght@400;500;700&display=swap');
+
+  :root{
+    --grid: #E1E3E6;
+    --grid-strong: #C7CACD;
+    --header-bg: #F8F9FA;
+    --header-bg-active: #E8F0FE;
+    --text: #202124;
+    --text-dim: #5F6368;
+    --blue: #1A73E8;
+    --blue-dim: #E8F0FE;
+    --green: #188038;
+    --red: #D93025;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Roboto','Arial',sans-serif;
+    background:#F1F3F4;
+    color:var(--text);
+    min-height:100vh;
+  }
+
+  /* ---------- GATE PAGE ---------- */
+  #gate{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:linear-gradient(180deg,#F8F9FA 0%, #F1F3F4 100%);
+  }
+  .gate-card{
+    background:#fff;
+    border:1px solid var(--grid-strong);
+    border-radius:8px;
+    box-shadow:0 1px 3px rgba(60,64,67,0.15), 0 4px 8px rgba(60,64,67,0.1);
+    width:100%;
+    max-width:380px;
+    padding:40px 36px 32px;
+    text-align:center;
+  }
+  .gate-icon{
+    width:44px; height:44px;
+    margin:0 auto 18px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .gate-card h1{
+    font-family:'Google Sans','Roboto',sans-serif;
+    font-size:20px;
+    font-weight:500;
+    margin:0 0 6px;
+    color:var(--text);
+  }
+  .gate-card p.sub{
+    font-size:13px;
+    color:var(--text-dim);
+    margin:0 0 26px;
+    line-height:1.5;
+  }
+  .gate-field{
+    text-align:left;
+    margin-bottom:6px;
+  }
+  .gate-field label{
+    display:block;
+    font-size:12px;
+    color:var(--text-dim);
+    margin-bottom:6px;
+  }
+  .gate-field input{
+    width:100%;
+    padding:11px 13px;
+    border:1px solid #DADCE0;
+    border-radius:5px;
+    font-size:14px;
+    font-family:'Roboto',sans-serif;
+    outline:none;
+    color:var(--text);
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .gate-field input:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 1px var(--blue);
+  }
+  .gate-error{
+    font-size:12px;
+    color:var(--red);
+    text-align:left;
+    margin-top:8px;
+    min-height:16px;
+  }
+  .gate-btn{
+    width:100%;
+    margin-top:20px;
+    background:var(--blue);
+    color:#fff;
+    border:none;
+    padding:11px;
+    border-radius:5px;
+    font-size:14px;
+    font-weight:500;
+    font-family:'Roboto',sans-serif;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .gate-btn:hover{background:#1765CC;}
+  .gate-foot{
+    font-size:11px;
+    color:#9AA0A6;
+    margin-top:22px;
+  }
+
+  /* ---------- APP ---------- */
+  #app{display:none;}
+  #app.show{display:block;}
+
+  .topbar{
+    background:#fff;
+    border-bottom:1px solid var(--grid-strong);
+    padding:10px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .topbar-left{display:flex; align-items:center; gap:10px;}
+  .topbar-left svg{flex-shrink:0;}
+  .topbar h1{
+    font-family:'Google Sans','Roboto',sans-serif;
+    font-size:16px;
+    font-weight:500;
+    margin:0;
+  }
+  .topbar .who{
+    font-size:12px;
+    color:var(--text-dim);
+  }
+  .topbar-right{display:flex; align-items:center; gap:8px;}
+  .tb-search{
+    display:flex; align-items:center;
+    border:1px solid #DADCE0;
+    border-radius:5px;
+    padding:6px 10px;
+    gap:6px;
+    background:#F8F9FA;
+  }
+  .tb-search input{
+    border:none; background:transparent; outline:none;
+    font-size:13px; width:180px; color:var(--text);
+    font-family:'Roboto',sans-serif;
+  }
+  .tb-btn{
+    background:var(--blue);
+    color:#fff;
+    border:none;
+    padding:8px 14px;
+    border-radius:5px;
+    font-size:13px;
+    font-weight:500;
+    font-family:'Roboto',sans-serif;
+    cursor:pointer;
+  }
+  .tb-btn:hover{background:#1765CC;}
+  .tb-btn-outline{
+    background:#fff;
+    color:var(--text-dim);
+    border:1px solid #DADCE0;
+    padding:8px 12px;
+    border-radius:5px;
+    font-size:12.5px;
+    cursor:pointer;
+    font-family:'Roboto',sans-serif;
+  }
+  .tb-btn-outline:hover{background:#F8F9FA;}
+
+  .sheet-wrap{
+    padding:22px;
+    overflow-x:auto;
+  }
+  .sheet{
+    background:#fff;
+    border:1px solid var(--grid-strong);
+    border-radius:2px;
+    display:inline-block;
+    min-width:100%;
+  }
+  table{border-collapse:collapse; width:100%;}
+
+  /* column letter row */
+  .col-row th{
+    background:var(--header-bg);
+    border:1px solid var(--grid);
+    color:var(--text-dim);
+    font-weight:400;
+    font-size:11px;
+    padding:4px 0;
+    text-align:center;
+    min-width:150px;
+  }
+  .col-row th.rownum-col{min-width:34px; width:34px;}
+
+  /* banner row (SSID/password) */
+  .banner-row td{
+    border:1px solid var(--grid);
+    background:#fff;
+    padding:0;
+  }
+  .banner-row .rownum-col{background:var(--header-bg); border:1px solid var(--grid);}
+  .banner-cell{
+    padding:9px 12px;
+    font-size:13px;
+    font-weight:700;
+    text-align:center;
+    color:var(--text);
+  }
+  .banner-cell[contenteditable="true"]{outline:none; cursor:text;}
+  .banner-cell[contenteditable="true"]:focus{background:var(--blue-dim); box-shadow:inset 0 0 0 2px var(--blue);}
+
+  /* header labels row */
+  .label-row td{
+    border:1px solid var(--grid);
+    background:#fff;
+    padding:9px 12px;
+    font-size:12.5px;
+    font-weight:700;
+    text-align:center;
+    color:var(--text);
+  }
+  .label-row .rownum-col{background:var(--header-bg);}
+
+  /* data rows */
+  tbody.data-body td{
+    border:1px solid var(--grid);
+    padding:0;
+    font-size:13px;
+    height:34px;
+  }
+  tbody.data-body .rownum-col{
+    background:var(--header-bg);
+    color:var(--text-dim);
+    font-size:11.5px;
+    text-align:center;
+    width:34px;
+    min-width:34px;
+    user-select:none;
+    position:relative;
+  }
+  .del-x{
+    display:none;
+    position:absolute;
+    right:2px; top:50%; transform:translateY(-50%);
+    color:var(--red);
+    cursor:pointer;
+    font-size:13px;
+    line-height:1;
+    padding:2px;
+  }
+  tbody.data-body tr:hover .del-x{display:block;}
+  tbody.data-body tr:hover .rownum-text{display:none;}
+
+  .cell-input{
+    width:100%;
+    height:34px;
+    border:none;
+    outline:none;
+    padding:0 10px;
+    font-size:13px;
+    font-family:'Roboto',sans-serif;
+    color:var(--text);
+    background:transparent;
+  }
+  .cell-input.mono{font-family:'Roboto Mono','Courier New',monospace; font-size:12.5px; letter-spacing:0.2px;}
+  .cell-input:focus{
+    background:#fff;
+    box-shadow:inset 0 0 0 2px var(--blue);
+  }
+  td.invalid .cell-input{box-shadow:inset 0 0 0 2px var(--red);}
+
+  .remarks-cell{position:relative;}
+  .remarks-cell select{
+    width:100%;
+    height:34px;
+    border:none;
+    outline:none;
+    padding:0 10px;
+    font-size:13px;
+    font-family:'Roboto',sans-serif;
+    color:var(--text);
+    background:transparent;
+    appearance:none;
+    cursor:pointer;
+  }
+  .remarks-cell::after{
+    content:'';
+    position:absolute;
+    right:9px; top:50%;
+    width:0; height:0;
+    border-left:4px solid transparent;
+    border-right:4px solid transparent;
+    border-top:5px solid var(--text-dim);
+    transform:translateY(-30%);
+    pointer-events:none;
+  }
+  .remarks-cell select:focus{background:#fff; box-shadow:inset 0 0 0 2px var(--blue);}
+
+  .add-row-btn{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:9px 12px;
+    font-size:12.5px;
+    color:var(--text-dim);
+    cursor:pointer;
+    border:1px solid var(--grid);
+    border-top:none;
+    background:#fff;
+  }
+  .add-row-btn:hover{background:var(--header-bg);}
+
+  .toast{
+    position:fixed;
+    bottom:22px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:#323639;
+    color:#fff;
+    padding:10px 18px;
+    border-radius:5px;
+    font-size:13px;
+    font-family:'Roboto',sans-serif;
+    opacity:0;
+    transition:all .25s;
+    pointer-events:none;
+    z-index:100;
+    box-shadow:0 2px 6px rgba(0,0,0,0.3);
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:700px){
+    .topbar{flex-direction:column; align-items:flex-start;}
+    .tb-search input{width:120px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== GATE PAGE ===================== -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-icon">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <rect x="7" y="4" width="30" height="36" rx="2" fill="#0F9D58"/>
+        <rect x="11" y="12" width="22" height="3" fill="#fff"/>
+        <rect x="11" y="18" width="22" height="2" fill="#8FD9B6"/>
+        <rect x="11" y="22" width="22" height="2" fill="#8FD9B6"/>
+        <rect x="11" y="26" width="22" height="2" fill="#8FD9B6"/>
+        <rect x="11" y="30" width="22" height="2" fill="#8FD9B6"/>
+        <rect x="20" y="18" width="2" height="14" fill="#0B8043"/>
+        <rect x="27" y="18" width="2" height="14" fill="#0B8043"/>
+      </svg>
+    </div>
+    <h1>STLAF Device Registry</h1>
+    <p class="sub">Sign in with your STLAF intern account to view and manage the device list.</p>
+    <form id="gateForm">
+      <div class="gate-field">
+        <label for="gateEmail">Email address</label>
+        <input type="email" id="gateEmail" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="gate-error" id="gateError"></div>
+      <button type="submit" class="gate-btn">Continue</button>
+    </form>
+    <div class="gate-foot">Access restricted to authorized STLAF IT intern accounts.</div>
+  </div>
+</div>
+
+<!-- ===================== MAIN APP ===================== -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <svg width="26" height="26" viewBox="0 0 44 44" fill="none">
+        <rect x="7" y="4" width="30" height="36" rx="2" fill="#0F9D58"/>
+        <rect x="11" y="12" width="22" height="3" fill="#fff"/>
+        <rect x="11" y="18" width="22" height="2" fill="#8FD9B6"/>
+        <rect x="11" y="22" width="22" height="2" fill="#8FD9B6"/>
+        <rect x="11" y="26" width="22" height="2" fill="#8FD9B6"/>
+        <rect x="11" y="30" width="22" height="2" fill="#8FD9B6"/>
+        <rect x="20" y="18" width="2" height="14" fill="#0B8043"/>
+        <rect x="27" y="18" width="2" height="14" fill="#0B8043"/>
+      </svg>
+      <div>
+        <h1>STLAF Device Registry</h1>
+        <div class="who" id="whoLine">Signed in as —</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#5F6368" stroke-width="2"/><path d="M20 20l-4-4" stroke="#5F6368" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" id="searchInput" placeholder="Search names, MAC, remarks">
+      </div>
+      <button class="tb-btn-outline" id="signOutBtn">Sign out</button>
+    </div>
+  </div>
+
+  <div class="sheet-wrap">
+    <div class="sheet">
+      <table>
+        <colgroup>
+          <col style="width:34px;">
+          <col style="width:200px;">
+          <col style="width:220px;">
+          <col style="width:220px;">
+          <col style="width:220px;">
+        </colgroup>
+        <thead>
+          <tr class="col-row">
+            <th class="rownum-col"></th>
+            <th>B</th>
+            <th>E</th>
+            <th>F</th>
+            <th>G</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="banner-row">
+            <td class="rownum-col"></td>
+            <td></td>
+            <td colspan="2">
+              <div class="banner-cell" id="ssidBanner" contenteditable="true" spellcheck="false">SSID: STLAF Intern | Password: stlaf-Intern!</div>
+            </td>
+            <td></td>
+          </tr>
+          <tr class="label-row">
+            <td class="rownum-col"></td>
+            <td>NAME</td>
+            <td>LAPTOP</td>
+            <td>MOBILE</td>
+            <td>REMARKS</td>
+          </tr>
+        </tbody>
+      </table>
+      <table id="dataTable">
+        <colgroup>
+          <col style="width:34px;">
+          <col style="width:200px;">
+          <col style="width:220px;">
+          <col style="width:220px;">
+          <col style="width:220px;">
+        </colgroup>
+        <tbody class="data-body" id="tableBody"></tbody>
+      </table>
+      <div class="add-row-btn" id="addRowBtn">
+        <span style="font-size:15px;">+</span> Add row
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ALLOWED_EMAIL = 'stlaf.itintern@gmail.com';
+let devices = [];
+let signedInEmail = '';
+
+const macRegex = /^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$/;
+
+/* ---------- GATE ---------- */
+document.getElementById('gateForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const val = document.getElementById('gateEmail').value.trim().toLowerCase();
+  const err = document.getElementById('gateError');
+  if(val !== ALLOWED_EMAIL){
+    err.textContent = 'This account isn\u2019t authorized for the device registry.';
+    return;
+  }
+  err.textContent = '';
+  signedInEmail = val;
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  document.getElementById('whoLine').textContent = 'Signed in as ' + signedInEmail;
+  loadDevices();
+});
+
+document.getElementById('signOutBtn').addEventListener('click', function(){
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('gate').style.display = 'flex';
+  document.getElementById('gateEmail').value = '';
+  document.getElementById('gateError').textContent = '';
+});
+
+/* ---------- TOAST ---------- */
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1600);
+}
+
+/* ---------- STORAGE ---------- */
+async function loadDevices(){
+  try{
+    const raw = localStorage.getItem('stlaf_devices');
+    devices = raw ? JSON.parse(raw) : [];
+  }catch(e){
+    devices = [];
+  }
+  if(devices.length === 0){
+    // start with a few blank rows, like an empty sheet
+    for(let i=0;i<3;i++) devices.push(blankRow());
+  }
+  try{
+    const banner = localStorage.getItem('stlaf_ssid_banner');
+    if(banner) document.getElementById('ssidBanner').textContent = banner;
+  }catch(e){}
+  render();
+}
+
+async function saveDevices(){
+  try{
+    localStorage.setItem('stlaf_devices', JSON.stringify(devices));
+  }catch(e){
+    toast('Could not save — try again');
+  }
+}
+
+function blankRow(){
+  return { id: 'd'+Date.now()+Math.random().toString(36).slice(2,7), name:'', laptop:'', mobile:'', remarks:'' };
+}
+
+/* ---------- RENDER ---------- */
+const REMARK_OPTIONS = ['', 'Active', 'Returned', 'Lost', 'For replacement', 'Pending'];
+
+function render(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  devices.forEach((d, idx) => {
+    if(q){
+      const hay = (d.name+' '+d.laptop+' '+d.mobile+' '+d.remarks).toLowerCase();
+      if(!hay.includes(q)) return;
+    }
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rownum-col">
+        <span class="rownum-text">${idx+1}</span>
+        <span class="del-x" data-id="${d.id}" title="Delete row">✕</span>
+      </td>
+      <td><input class="cell-input" data-id="${d.id}" data-field="name" value="${escapeAttr(d.name)}" placeholder=""></td>
+      <td><input class="cell-input mono" data-id="${d.id}" data-field="laptop" value="${escapeAttr(d.laptop)}" placeholder="00:1A:2B:3C:4D:5E"></td>
+      <td><input class="cell-input mono" data-id="${d.id}" data-field="mobile" value="${escapeAttr(d.mobile)}" placeholder="00:1A:2B:3C:4D:5E"></td>
+      <td class="remarks-cell">
+        <select data-id="${d.id}" data-field="remarks">
+          ${REMARK_OPTIONS.map(o=>`<option value="${escapeAttr(o)}" ${o===d.remarks?'selected':''}>${o || '—'}</option>`).join('')}
+        </select>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  tbody.querySelectorAll('.cell-input').forEach(inp=>{
+    inp.addEventListener('change', onCellChange);
+    inp.addEventListener('blur', onCellChange);
+  });
+  tbody.querySelectorAll('select').forEach(sel=>{
+    sel.addEventListener('change', onCellChange);
+  });
+  tbody.querySelectorAll('.del-x').forEach(x=>{
+    x.addEventListener('click', onDeleteRow);
+  });
+}
+
+function escapeAttr(str){
+  return (str||'').replace(/"/g,'&quot;');
+}
+
+function onCellChange(e){
+  const id = e.target.getAttribute('data-id');
+  const field = e.target.getAttribute('data-field');
+  const value = e.target.value.trim();
+  const row = devices.find(d=>d.id===id);
+  if(!row) return;
+
+  if((field==='laptop' || field==='mobile') && value && !macRegex.test(value)){
+    e.target.closest('td').classList.add('invalid');
+    toast('MAC format should look like 00:1A:2B:3C:4D:5E');
+    return;
+  }
+  e.target.closest('td').classList.remove('invalid');
+  row[field] = value;
+  saveDevices();
+}
+
+function onDeleteRow(e){
+  const id = e.target.getAttribute('data-id');
+  const row = devices.find(d=>d.id===id);
+  if(!row) return;
+  const label = row.name || 'this row';
+  if(confirm(`Remove ${label}?`)){
+    devices = devices.filter(d=>d.id!==id);
+    saveDevices();
+    render();
+    toast('Row removed');
+  }
+}
+
+document.getElementById('addRowBtn').addEventListener('click', function(){
+  devices.push(blankRow());
+  saveDevices();
+  render();
+});
+
+document.getElementById('searchInput').addEventListener('input', render);
+
+document.getElementById('ssidBanner').addEventListener('blur', function(){
+  try{
+    localStorage.setItem('stlaf_ssid_banner', this.textContent.trim());
+  }catch(e){}
+});
+</script>
+</body>
+</html>
