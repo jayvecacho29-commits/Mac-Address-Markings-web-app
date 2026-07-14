@@ -485,8 +485,8 @@
    project's URL and anon (public) key from:
    Supabase Dashboard → Project Settings → API
    ========================================================= */
-const SUPABASE_URL = 'https://xaxsfyjgdcyetkfujrrd.supabase.co/rest/v1/';
-const SUPABASE_ANON_KEY = 'sb_publishable_Gz09UcR_XXbbKB2hFVWjVQ_8cRtk00R';
+const SUPABASE_URL = 'https://xaxsfyjgdcyetkfujrrd.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheHNmeWpnZGN5ZXRrZnVqcnJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMDEzOTksImV4cCI6MjA5OTU3NzM5OX0.gEo-21dbReUZIxEOTtDQdhU0UzlQ91nnIwQwNhP_EOQ';
 
 const db = (SUPABASE_URL.startsWith('YOUR_') ? null : window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY));
 
