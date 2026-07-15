@@ -381,6 +381,10 @@
         <div class="count" id="countLine">0 devices</div>
       </div>
       <div class="head-actions">
+        <div class="icon-square" id="importBtn" title="Import CSV">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 15V3m0 0l-4 4m4-4l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
         <div class="icon-square" id="exportBtn" title="Export CSV">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         </div>
@@ -761,7 +765,87 @@ document.getElementById('saveBtn').addEventListener('click', saveEntry);
 document.getElementById('overlay').addEventListener('click', (e)=>{ if(e.target.id==='overlay') closeModal(); });
 document.getElementById('searchInput').addEventListener('input', render);
 document.getElementById('sortSelect').addEventListener('change', function(){ sortMode=this.value; render(); });
+/* ---------- IMPORT CSV ---------- */
+function parseCsv(text){
+  // simple RFC4180-ish parser: handles quoted fields with commas/newlines
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for(let i=0; i<text.length; i++){
+    const c = text[i], next = text[i+1];
+    if(inQuotes){
+      if(c === '"' && next === '"'){ field += '"'; i++; }
+      else if(c === '"'){ inQuotes = false; }
+      else{ field += c; }
+    } else {
+      if(c === '"'){ inQuotes = true; }
+      else if(c === ','){ row.push(field); field=''; }
+      else if(c === '\n' || c === '\r'){
+        if(c === '\r' && next === '\n') i++;
+        row.push(field); field='';
+        if(row.some(v=>v.trim()!=='')) rows.push(row);
+        row = [];
+      } else { field += c; }
+    }
+  }
+  if(field !== '' || row.length){ row.push(field); if(row.some(v=>v.trim()!=='')) rows.push(row); }
+  return rows;
+}
+
+function normalizeHeader(h){
+  return h.trim().toLowerCase().replace(/[^a-z]/g,'');
+}
+
+async function importCsvFile(file){
+  if(!db){ toast('Supabase isn\u2019t configured yet — see the setup notes'); return; }
+  const text = await file.text();
+  const rows = parseCsv(text);
+  if(rows.length < 2){ toast('That CSV looks empty'); return; }
+
+  const headerRow = rows[0].map(normalizeHeader);
+  const colIndex = {
+    name: headerRow.findIndex(h => h.includes('name')),
+    laptop: headerRow.findIndex(h => h.includes('laptop')),
+    mobile: headerRow.findIndex(h => h.includes('mobile') || h.includes('phone')),
+    remarks: headerRow.findIndex(h => h.includes('remark')),
+  };
+
+  if(colIndex.name === -1){
+    toast('Could not find a "Name" column in that CSV');
+    return;
+  }
+
+  const toInsert = [];
+  for(let i=1; i<rows.length; i++){
+    const r = rows[i];
+    const name = (r[colIndex.name] || '').trim();
+    if(!name) continue;
+    const laptop = colIndex.laptop > -1 ? (r[colIndex.laptop]||'').trim() : '';
+    const mobile = colIndex.mobile > -1 ? (r[colIndex.mobile]||'').trim() : '';
+    const remarks = colIndex.remarks > -1 ? (r[colIndex.remarks]||'').trim() : '';
+    toInsert.push({ name, laptop, mobile, remarks, date_added: todayStr() });
+  }
+
+  if(toInsert.length === 0){ toast('No valid rows found to import'); return; }
+
+  toast(`Importing ${toInsert.length} row${toInsert.length===1?'':'s'}...`);
+  const { data, error } = await db.from('devices').insert(toInsert).select();
+  if(error){ toast('Import failed: ' + error.message); return; }
+  devices = devices.concat(data);
+  render();
+  toast(`Imported ${data.length} device${data.length===1?'':'s'}`);
+}
+
+document.getElementById('importBtn').addEventListener('click', function(){
+  document.getElementById('csvFileInput').click();
+});
+document.getElementById('csvFileInput').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if(file) importCsvFile(file);
+  this.value = '';
+});
 document.getElementById('exportBtn').addEventListener('click', exportCsv);
+
+
 document.getElementById('densityBtn').addEventListener('click', function(){
   compact = !compact;
   document.querySelectorAll('td, thead th').forEach(el=>{
